@@ -12,6 +12,7 @@
 		"static/style.less"
 	],
 	"scripts": [
+		"static/lib/main.js",
 		"static/lib/admin.js"
 	],
 	"templates": "static/templates"

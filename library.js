@@ -19,9 +19,11 @@ var controllers = require('./lib/controllers'),
 plugin.init = function(params, callback) {
 	var router = params.router,
 		hostMiddleware = params.middleware,
-		hostControllers = params.controllers;
+		hostControllers = params.controllers,
+		SocketPlugins = require.main.require('./src/socket.io/plugins');
 		
 	_app = params.app;
+	SocketPlugins.shopify = require('./lib/websockets');
 
 	router.get('/admin/plugins/shopify', hostMiddleware.admin.buildHeader, controllers.renderAdminPage);
 	router.get('/api/admin/plugins/shopify', controllers.renderAdminPage);
@@ -145,5 +147,19 @@ plugin.parseRaw = function(content, callback) {
 		return callback(null, content);
 	});
 };
+
+plugin.find = function(query, callback) {
+	callback(null, Object.keys(plugin.lookup)
+		.filter(function(slug) {
+			return slug.indexOf(query) !== -1;
+		})
+		.sort(function(a, b) {
+			// Float matches where matched text is nearer the beginning to the top
+			return a.indexOf(query) > b.indexOf(query) ? 1 : -1;
+		})
+		.map(function(slug) {
+			return plugin.lookup[slug];
+		}));
+}
 
 module.exports = plugin;
