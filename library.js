@@ -131,11 +131,7 @@ plugin.parseRaw = function(content, callback) {
 	async.eachSeries(matches, function(match, next) {
 		var slug = match.slice(1);
 		if (plugin.lookup.hasOwnProperty(slug)) {
-			console.log(plugin.lookup[slug]);
-			_app.render('partials/shopify/infobox', {
-				slug: slug,
-				product: plugin.lookup[slug]
-			}, function(err, html) {
+			_app.render('partials/shopify/infobox', plugin.lookup[slug], function(err, html) {
 				if (!err) {
 					content = content.replace(match, html);
 				}
