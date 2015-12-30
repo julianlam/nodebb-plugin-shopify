@@ -103,7 +103,7 @@ plugin.buildLookupTable = function(callback) {
 	// For each product, grab the title, slugify it, and add to lookup table
 	winston.verbose('[shopify] Building lookup table...');
 	plugin.products.forEach(function(productObj) {
-		plugin.lookup[utils.slugify(productObj.title)] = productObj;
+		plugin.lookup[productObj.handle] = productObj;
 	});
 
 	winston.verbose('[shopify] Lookup table built.');
