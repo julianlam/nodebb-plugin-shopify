@@ -4,7 +4,9 @@
 	"library": "./library.js",
 	"hooks": [
 		{ "hook": "static:app.load", "method": "init" },
-		{ "hook": "filter:admin.header.build", "method": "addAdminNavigation" }
+		{ "hook": "filter:admin.header.build", "method": "addAdminNavigation" },
+		{ "hook": "filter:parse.post", "method": "parsePost" },
+		{ "hook": "filter:parse.raw", "method": "parseRaw" }
 	],
 	"less": [
 		"static/style.less"

@@ -6,26 +6,30 @@ var controllers = require('./lib/controllers'),
 	request = module.parent.require('request'),
 
 	meta = module.parent.require('./meta'),
+	utils = module.parent.require('../public/src/utils'),
 
 	plugin = {
 		ready: false,
-		products: []
-	};
+		products: [],
+		lookup: {},
+		matchRegex: /#[\w\-_]+/g
+	},
+	_app;
 
 plugin.init = function(params, callback) {
 	var router = params.router,
 		hostMiddleware = params.middleware,
 		hostControllers = params.controllers;
 		
-	// We create two routes for every view. One API call, and the actual route itself.
-	// Just add the buildHeader middleware to your route and NodeBB will take care of everything for you.
+	_app = params.app;
 
 	router.get('/admin/plugins/shopify', hostMiddleware.admin.buildHeader, controllers.renderAdminPage);
 	router.get('/api/admin/plugins/shopify', controllers.renderAdminPage);
 
 	async.series([
 		async.apply(plugin.updateSettings),
-		async.apply(plugin.updateProducts)
+		async.apply(plugin.updateProducts),
+		async.apply(plugin.buildLookupTable)
 	]);
 
 	callback();
@@ -91,6 +95,58 @@ plugin.updateProducts = function(callback) {
 		return !finished;
 	}, function() {
 		winston.info('[shopify] Product retrieval complete, curating ' + plugin.products.length + ' products');
+		callback();
+	});
+};
+
+plugin.buildLookupTable = function(callback) {
+	// For each product, grab the title, slugify it, and add to lookup table
+	winston.verbose('[shopify] Building lookup table...');
+	plugin.products.forEach(function(productObj) {
+		plugin.lookup[utils.slugify(productObj.title)] = productObj;
+	});
+
+	winston.verbose('[shopify] Lookup table built.');
+	callback();
+};
+
+plugin.parsePost = function(data, callback) {
+	if (!data || !data.postData || !data.postData.content) {
+		return callback(null, data);
+	}
+
+	plugin.parseRaw(data.postData.content, function(err, content) {
+		if (err) {
+			return callback(err);
+		}
+
+		data.postData.content = content;
+		callback(null, data);
+	});
+};
+
+plugin.parseRaw = function(content, callback) {
+	var matches = content.match(plugin.matchRegex);
+
+	async.eachSeries(matches, function(match, next) {
+		var slug = match.slice(1);
+		if (plugin.lookup.hasOwnProperty(slug)) {
+			console.log(plugin.lookup[slug]);
+			_app.render('partials/shopify/infobox', {
+				slug: slug,
+				product: plugin.lookup[slug]
+			}, function(err, html) {
+				if (!err) {
+					content = content.replace(match, html);
+				}
+
+				return next();
+			});
+		} else {
+			return next();
+		}
+	}, function(err) {
+		return callback(null, content);
 	});
 };
 
