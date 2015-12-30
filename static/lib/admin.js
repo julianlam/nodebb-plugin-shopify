@@ -6,7 +6,16 @@ define('admin/plugins/shopify', ['settings'], function(Settings) {
 	var ACP = {};
 
 	ACP.init = function() {
-		Settings.load('shopify', $('.shopify-settings'));
+		Settings.load('shopify', $('.shopify-settings'), function() {
+			$('#infoboxTpl').text($('[name=infoboxTpl]').val());
+			var editor = ace.edit('infoboxTpl');
+			editor.setTheme("ace/theme/twilight");
+			editor.getSession().setMode("ace/mode/html");
+
+			editor.on('change', function(e) {
+				$('[name=infoboxTpl]').val(editor.getValue());
+			});
+		});
 
 		$('#save').on('click', function() {
 			Settings.save('shopify', $('.shopify-settings'), function() {
@@ -20,7 +29,7 @@ define('admin/plugins/shopify', ['settings'], function(Settings) {
 					}
 				});
 			});
-		});
+		});	
 	};
 
 	return ACP;

@@ -4,6 +4,7 @@ var controllers = require('./lib/controllers'),
 	async = module.parent.require('async'),
 	winston = module.parent.require('winston'),
 	request = module.parent.require('request'),
+	templates = module.parent.require('templates.js'),
 
 	meta = module.parent.require('./meta'),
 	utils = module.parent.require('../public/src/utils'),
@@ -133,10 +134,10 @@ plugin.parseRaw = function(content, callback) {
 	async.eachSeries(matches, function(match, next) {
 		var slug = match.slice(1);
 		if (plugin.lookup.hasOwnProperty(slug)) {
-			_app.render('partials/shopify/infobox', plugin.lookup[slug], function(err, html) {
-				if (!err) {
+			templates.parse('<div class="shopify-infobox">' + plugin.settings.infoboxTpl + '</div>', plugin.lookup[slug], function(html) {
+				// if (!err) {
 					content = content.replace(match, html);
-				}
+				// }
 
 				return next();
 			});

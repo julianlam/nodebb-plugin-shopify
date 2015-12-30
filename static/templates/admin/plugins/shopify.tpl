@@ -14,6 +14,7 @@
 		</ul>
 	</div>
 </div>
+
 <div class="row">
 	<div class="col-sm-2 col-xs-12 settings-header">Authentication</div>
 	<div class="col-sm-10 col-xs-12">
@@ -33,6 +34,18 @@
 					Your Shopify <em>Shop Name</em> is your subdomain (e.g. "myshop.shopify.com")
 				</p>
 			</div>
+		</form>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-sm-2 col-xs-12 settings-header">Customise Infobox</div>
+	<div class="col-sm-10 col-xs-12">
+		<form role="form" class="shopify-settings">
+			<code>&lt;div class="shopify-infobox"&gt;</code>
+			<div id="infoboxTpl"></div>
+			<input name="infoboxTpl" type="hidden" />
+			<code>&lt;/div&gt;</code>
 		</form>
 	</div>
 </div>
