@@ -42,10 +42,18 @@
 	<div class="col-sm-2 col-xs-12 settings-header">Customise Infobox</div>
 	<div class="col-sm-10 col-xs-12">
 		<form role="form" class="shopify-settings">
-			<code>&lt;div class="shopify-infobox"&gt;</code>
-			<div id="infoboxTpl"></div>
-			<input name="infoboxTpl" type="hidden" />
-			<code>&lt;/div&gt;</code>
+			<div class="form-group">
+				<label for="productUrlPrefix">Product URL Prefix</label>
+				<input type="text" class="form-control" id="productUrlPrefix" name="productUrlPrefix" placeholder="https://example.org/products/" />
+			</div>
+			<div class="form-group">
+				<label for="vendorUrlPrefix">Vendor URL Prefix</label>
+				<input type="text" class="form-control" id="vendorUrlPrefix" name="vendorUrlPrefix" placeholder="https://example.org/collections/vendors?q=" />
+			</div>
+			<div class="form-group">
+				<label for="typeUrlPrefix">Product Type URL Prefix</label>
+				<input type="text" class="form-control" id="typeUrlPrefix" name="typeUrlPrefix" placeholder="https://example.org/collections/types?q=" />
+			</div>
 		</form>
 	</div>
 </div>

@@ -130,23 +130,44 @@ plugin.parsePost = function(data, callback) {
 
 plugin.parseRaw = function(content, callback) {
 	var matches = content.match(plugin.matchRegex);
+	var products = matches.filter(function(match, idx, arr) {
+		return idx === arr.indexOf(match);
+	}).map(function(match) {
+		return plugin.lookup[match.slice(1)];
+	}).filter(Boolean);
 
-	async.eachSeries(matches, function(match, next) {
-		var slug = match.slice(1);
-		if (plugin.lookup.hasOwnProperty(slug)) {
-			templates.parse('<div class="shopify-infobox">' + plugin.settings.infoboxTpl + '</div>', plugin.lookup[slug], function(html) {
-				// if (!err) {
-					content = content.replace(match, html);
-				// }
+	_app.render('partials/shopify/infoboxes', {
+		productUrlPrefix: plugin.settings.productUrlPrefix,
+		vendorUrlPrefix: plugin.settings.vendorUrlPrefix,
+		typeUrlPrefix: plugin.settings.typeUrlPrefix,
+		matches: products
+	}, function(err, html) {
+		// Replace the # with the product name
+		content = content.replace(plugin.matchRegex, function(match) {
+			return plugin.lookup[match.slice(1)].title;
+		});
 
-				return next();
-			});
-		} else {
-			return next();
-		}
-	}, function(err) {
-		return callback(null, content);
+		content += html;
+
+		callback(null, content);
 	});
+
+	// async.eachSeries(matches, function(match, next) {
+	// 	var slug = match.slice(1);
+	// 	if (plugin.lookup.hasOwnProperty(slug)) {
+	// 		templates.parse('<div class="shopify-infobox">' + plugin.settings.infoboxTpl + '</div>', plugin.lookup[slug], function(html) {
+	// 			// if (!err) {
+	// 				content = content.replace(match, html);
+	// 			// }
+
+	// 			return next();
+	// 		});
+	// 	} else {
+	// 		return next();
+	// 	}
+	// }, function(err) {
+	// 	return callback(null, content);
+	// });
 };
 
 plugin.find = function(query, callback) {
