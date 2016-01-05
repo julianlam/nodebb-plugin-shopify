@@ -130,6 +130,11 @@ plugin.parsePost = function(data, callback) {
 
 plugin.parseRaw = function(content, callback) {
 	var matches = content.match(plugin.matchRegex);
+
+	if (!matches) {
+		return callback(null, content);
+	}
+
 	var products = matches.filter(function(match, idx, arr) {
 		return idx === arr.indexOf(match);
 	}).map(function(match) {
@@ -144,7 +149,11 @@ plugin.parseRaw = function(content, callback) {
 	}, function(err, html) {
 		// Replace the # with the product name
 		content = content.replace(plugin.matchRegex, function(match) {
-			return plugin.lookup[match.slice(1)].title;
+			if (plugin.lookup.hasOwnProperty(match.slice(1))) {
+				return plugin.lookup[match.slice(1)].title;
+			} else {
+				return match;
+			}
 		});
 
 		content += html;

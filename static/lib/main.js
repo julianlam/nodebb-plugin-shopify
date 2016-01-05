@@ -7,14 +7,15 @@ $(window).on('action:composer.loaded', function(e, data) {
 			var usernames;
 
 			socket.emit('plugins.shopify.find', {query: term}, function(err, products) {
-				callback(products.map(function(productObj) {
-					return productObj.title;
-				}));
+				callback(products);
 			});
 		},
+		template: function(productObj) {
+			return '<div class="shopify-textcomplete"><div class="img-container"><img src="' + productObj.image.src + '" /></div><span>' + productObj.title + '</span></div>';
+		},
 		index: 1,
-		replace: function (product) {
-			return '#' + utils.slugify(product) + ' ';
+		replace: function (productObj) {
+			return '#' + utils.slugify(productObj.title) + ' ';
 		},
 		cache: true
 	}], {
