@@ -15,7 +15,7 @@ $(window).on('action:composer.loaded', function(e, data) {
 		},
 		index: 1,
 		replace: function (productObj) {
-			return '#' + utils.slugify(productObj.title) + ' ';
+			return '#' + utils.slugify(productObj.handle) + ' ';
 		},
 		cache: true
 	}], {
