@@ -83,7 +83,7 @@ plugin.updateProducts = function(callback) {
 			},
 			json: true
 		}, function(err, res, body) {
-			if (res.statusCode === 200) {
+			if (!err && res.statusCode === 200) {
 				plugin.products = plugin.products.concat(body.products);
 				finished = body.products.length < 250;
 				page++;
